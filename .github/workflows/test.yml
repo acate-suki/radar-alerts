@@ -1,0 +1,17 @@
+name: Test
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate
+        run: docker run --rm -v "$PWD":/repo -w /repo binarylifter/gardusig-cli:1.2.0-node repo lint .
