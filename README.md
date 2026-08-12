@@ -1,25 +1,27 @@
 # radar-alerts
 
-A listener for things you care about — surface the interesting bits without subscribing to everything.
+A listener for things you care about — collect from many websites, store, process, and surface the interesting bits. Enterprise-style: **Go** pipeline + **MongoDB/Redis** + **vanilla JS** static site on GitHub Pages. Public, no auth.
 
 Three focus pillars:
 
-- **Markets** — stocks currently moving past thresholds: below/above **3% today**, **5% last week**, **10% last two weeks** (Brazil, B3).
-- **Brazil news** — a summary of the most relevant stuff, per tab: **crimes** · **politics** · **health**.
-- **Tech news** — what's new: **AI companies/models** · **new hardware**.
+- **Markets** — B3 stocks past thresholds (below/above 3% today, 5% week, 10% two weeks).
+- **Brazil news** — crimes · politics · health.
+- **Tech news** — new AI companies/models · new hardware.
 
-## How it works
-
-Data + rules live under `src/` — each area is a curated watchlist + a set of rules (what counts as "relevant"). The future backend service (scheduled fetchers → analysis → API/notifications) is tracked as issues; no deployment for now.
-
-## Layout
+## Structure
 
 ```text
 src/
-  markets/   B3 watchlist + threshold rules
-  news/
-    brazil/  crimes · politics · health tabs
-    tech/    ai · hardware
+  scraper/     Python web crawlers (markets · news · tech)
+  api/         Go API — serves the ui + queue/workers/notify pipeline
+  database/    mongo (raw collected data) + redis (page cache) + seed (curated rules)
+  ui/          vanilla JS static pages → GitHub Pages
+docker/        Dockerfile + docker-compose.yml (api + mongo + redis)
+docs/
 ```
 
-See `docs/` and the issue backlog for the roadmap.
+## How it works
+
+Crawler → store raw in MongoDB → in-process queue → workers → notify; Redis caches page-related views (reduces Mongo queries). The static `ui/` is rebuilt/updated as data is collected. No deployment beyond GitHub Pages for the static site.
+
+See the issue backlog for the roadmap.

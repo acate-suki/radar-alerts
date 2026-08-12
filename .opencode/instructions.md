@@ -1,19 +1,22 @@
 # Radar-alerts conventions
 
-A listener for things you care about. Three pillars:
+A listener for things you care about. Enterprise-style, public, no auth.
 
-- **Markets** — B3 stocks past thresholds (below/above 3% today, 5% week, 10% two weeks).
-- **Brazil news** — crimes · politics · health tabs, summarized.
-- **Tech news** — new AI companies/models · new hardware.
+## Structure
+
+- `src/scraper/` — Python web crawlers (markets · Brazil news · tech).
+- `src/api/` — Go API: serves the ui + in-process queue → workers → notify.
+- `src/database/` — `mongo/` (raw collected data) · `redis/` (page cache) · `seed/` (curated rules/watchlists).
+- `src/ui/` — vanilla JS static pages → GitHub Pages.
 
 ## Rules
 
-- Content lives under `src/` as curated watchlists + rules (data), one area per folder.
-- Each area keeps its own readme (the entry point) listing sources + keywords + rules.
-- Implementation (fetchers, analysis, notifications) is tracked as issues — no deployment for now.
+- Pipeline: crawler → Mongo (raw) → queue → workers → notify; Redis for page-related views.
+- Store raw in Mongo; keep curated rules as seed data.
+- No auth — the site is public.
 - Theme: `GitHub Dark Default`.
 
 ## CI
 
-- `test.yml` — PR gate (`cli repo lint`).
+- `test.yml` — PR gate: `cli repo lint`.
 - `release.yml` — main: validate + timestamp tag + GitHub release. No deployments.
