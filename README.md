@@ -1,6 +1,6 @@
 # radar-alerts
 
-A listener for things you care about — collect from many websites, store, process, and surface the interesting bits. Enterprise-style: **Go** pipeline + **MongoDB/Redis** + **vanilla JS** static site on GitHub Pages. Public, no auth.
+A listener for things you care about — **ingest public data → digest → static dashboard**. Async collection only, no backend deployed. The crawler runs on a schedule in GitHub Actions and commits JSON snapshots; the vanilla JS static site on GitHub Pages renders them as reports. Public, no auth, little interaction.
 
 Three focus pillars:
 
@@ -12,16 +12,21 @@ Three focus pillars:
 
 ```text
 src/
-  scraper/     Python web crawlers (markets · news · tech)
-  api/         Go API — serves the ui + queue/workers/notify pipeline
-  database/    mongo (raw collected data) + redis (page cache) + seed (curated rules)
+  scraper/     Python crawler — ingests public data, writes JSON snapshots
+  data/        curated rules + watchlists (seed) and snapshots/ (crawler output)
   ui/          vanilla JS static pages → GitHub Pages
-docker/        Dockerfile + docker-compose.yml (api + mongo + redis)
 docs/
 ```
 
 ## How it works
 
-Crawler → store raw in MongoDB → in-process queue → workers → notify; Redis caches page-related views (reduces Mongo queries). The static `ui/` is rebuilt/updated as data is collected. No deployment beyond GitHub Pages for the static site.
+`collect.yml` (scheduled GitHub Actions) runs the Python crawler → writes `src/data/snapshots/` → commits → `pages.yml` rebuilds the static site from `src/ui/` + `src/data/`. No API, no database, no long-running services — everything is batch and static.
+
+## Quick start
+
+```bash
+python src/scraper/crawler.py --out src/data/snapshots
+python -m http.server -d src/ui  # or open src/ui/index.html
+```
 
 See the issue backlog for the roadmap.

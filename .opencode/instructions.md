@@ -1,22 +1,24 @@
 # Radar-alerts conventions
 
-A listener for things you care about. Enterprise-style, public, no auth.
+A listener for things you care about. Static, public, no auth.
 
 ## Structure
 
-- `src/scraper/` — Python web crawlers (markets · Brazil news · tech).
-- `src/api/` — Go API: serves the ui + in-process queue → workers → notify.
-- `src/database/` — `mongo/` (raw collected data) · `redis/` (page cache) · `seed/` (curated rules/watchlists).
+- `src/scraper/` — Python crawler: ingests public data, writes JSON snapshots.
+- `src/data/` — curated rules + watchlists, and `snapshots/` (crawler output).
 - `src/ui/` — vanilla JS static pages → GitHub Pages.
 
 ## Rules
 
-- Pipeline: crawler → Mongo (raw) → queue → workers → notify; Redis for page-related views.
-- Store raw in Mongo; keep curated rules as seed data.
-- No auth — the site is public.
+- Pipeline: scheduled `collect.yml` → crawler → commit snapshots → `pages.yml` rebuilds the static site.
+- No deployed backend/API/database — async collection only.
+- Store curated rules as static data; crawler output goes to `src/data/snapshots/`.
+- The site is a dashboard with reports — little interaction.
 - Theme: `GitHub Dark Default`.
 
 ## CI
 
 - `test.yml` — PR gate: `cli repo lint`.
-- `release.yml` — main: validate + timestamp tag + GitHub release. No deployments.
+- `collect.yml` — scheduled snapshot refresh (async collection).
+- `pages.yml` — deploy `src/ui/` + `src/data/` to GitHub Pages.
+- `release.yml` — main: validate + timestamp tag + GitHub release.

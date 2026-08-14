@@ -1,7 +1,13 @@
 # scraper
 
-Python web crawler — collects data from many websites (markets, Brazil news, tech news).
+Python crawler — ingests publicly available data (markets, Brazil news, tech news) and writes JSON snapshots consumed by the static GitHub Pages site.
 
 - Markets: B3 quotes/thresholds.
 - News: Brazilian crime/politics/health sources + tech (AI/hardware).
-- Stores raw collected data in MongoDB; the API/workers process it.
+- Output: `src/data/snapshots/<category>/...json` (committed by `collect.yml`).
+
+Run locally:
+
+```bash
+python src/scraper/crawler.py --out src/data/snapshots
+```
