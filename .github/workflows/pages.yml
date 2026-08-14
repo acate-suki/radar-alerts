@@ -23,6 +23,7 @@ jobs:
         run: |
           mkdir -p _site
           cp -r src/ui/* _site/
+          cp -r src/data _site/data
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site
