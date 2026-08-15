@@ -16,7 +16,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Validate
-        run: docker run --rm -v "$PWD":/repo -w /repo binarylifter/gardusig-cli:1.2.0-node repo lint .
+        run: python3 -m py_compile src/scraper/crawler.py
       - name: Publish tag
         id: tag
         run: |

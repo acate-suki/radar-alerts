@@ -8,10 +8,18 @@ permissions:
   contents: read
 
 jobs:
-  test:
+  lint:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
-      - name: Validate
-        run: docker run --rm -v "$PWD":/repo -w /repo binarylifter/gardusig-cli:1.2.0-node repo lint .
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install --global --no-audit --no-fund markdownlint-cli@0.49.1
+      - run: markdownlint '**/*.md'
+
+  crawl:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 -m py_compile src/scraper/crawler.py
