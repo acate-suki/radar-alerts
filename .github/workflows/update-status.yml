@@ -1,8 +1,10 @@
 name: Repo status
 
+# Dormant: manual only. Fire the automation listener via repository_dispatch
+# when re-enabled.
+
 on:
-  push:
-    branches: [main]
+  workflow_dispatch:
 
 permissions:
   contents: read
