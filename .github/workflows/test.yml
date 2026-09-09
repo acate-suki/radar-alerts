@@ -14,4 +14,4 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Validate
-        run: docker run --rm -v "$PWD":/repo -w /repo binarylifter/gardusig-cli:1.2.0-node repo lint .
+        run: docker run --rm -v "$PWD":/repo -w /repo OWNER/cli:1.2.0-node repo lint .
